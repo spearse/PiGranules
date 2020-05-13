@@ -14,9 +14,14 @@
 void PiGranulesApp::initialise (const String& commandLine)
 {
     DBG("Pi Granules Starting");
-    DBG(commandLine);
     String init = m_deviceManager.initialiseWithDefaultDevices(0, 1);
     DBG(init);
+   
+    StringArray cmds = JUCEApplicationBase::getCommandLineParameterArray();
+    for(auto cmd : cmds){
+        DBG(cmd);
+    }
+    
     m_deviceManager.playTestSound();
     m_oscReceiver.addListener(this);
     bool connected = m_oscReceiver.connect(2112);

@@ -8,7 +8,7 @@ echo "Copying engine "
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # ...
-        cp Engine/Builds/LinuxMakeFile/build/PiGranuleEngine .
+        cp Engine/Builds/LinuxMakefile/build/PiGranuleEngine .
 else
         cp Engine/Builds/MacOSX/build/Debug/PiGranuleEngine .
         # Unknown.

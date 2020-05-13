@@ -139,7 +139,7 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
             for(int n = 0 ; n < m_childAddresses.size();++n){
                 if(m_childAddresses[n].toString() == childIp ){
                     childKnown = true;
-                    knownLoc = n;
+                    knownLoc = n+1;
                 }
             }
             int childId = -1;

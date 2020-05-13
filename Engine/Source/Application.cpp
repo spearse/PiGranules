@@ -17,9 +17,14 @@ void PiGranulesApp::initialise (const String& commandLine)
     String init = m_deviceManager.initialiseWithDefaultDevices(0, 1);
     DBG(init);
    
+    m_addr = IPAddress::getLocalAddress();
+    DBG("Ip of device: " + m_addr.toString());
     StringArray cmds = JUCEApplicationBase::getCommandLineParameterArray();
     for(auto cmd : cmds){
         DBG(cmd);
+        if(cmd == "--host"){
+            m_hostMode = true;
+        }
     }
     
     m_deviceManager.playTestSound();
@@ -31,15 +36,189 @@ void PiGranulesApp::initialise (const String& commandLine)
     }else{
         DBG("Listening on port 2112");
     }
+    
+    
+    if(m_hostMode){
+        m_hostOscReceiver.addListener(this);
+        m_hostAddr = m_addr;
+         bool connected = m_oscReceiver.connect(2113);
+        DBG("Setting up host");
+        if(!connected){
+               DBG("Could not setup host to listen on port 2113. Please ensure this port is free!");
+               JUCEApplicationBase::quit();
+           }else{
+               DBG("Host on port 2113");
+           }
+    }
+    if(!m_externalUISender.connect("127.0.0.1", 2111)){
+        DBG("Warning: Couldn't connect to external UI");
+    };
+    
+    
 }
+
+
+inline String GetStringSafely(const OSCMessage& msg,int pos){
+    String t;
+    if(pos < msg.size() && pos >=0){
+        if(msg[pos].isString()){
+            t = msg[pos].getString();
+        }
+    }
+    return t;
+};
+
+inline int GetIntSafely(const OSCMessage& msg,int pos){
+    int t = -666;
+    if(pos < msg.size() && pos >=0){
+        if(msg[pos].isInt32()){
+            t = msg[pos].getInt32();
+        }
+    }
+    return t;
+};
+
+inline int GetFloatSafely(const OSCMessage& msg,int pos){
+    float t = -666;
+    if(pos < msg.size() && pos >=0){
+        if(msg[pos].isFloat32()){
+            t = msg[pos].getFloat32();
+        }
+    }
+    return t;
+};
+
+
 void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
     String path = message.getAddressPattern().toString();
     if(path == "/playtest"){
         m_deviceManager.playTestSound();
+    }else if(path == "/searchforhost"){
+        searchForHost();
+    }else if(path == "/queryhost" && m_hostMode == true){
+        //send back your details to confirm.
+        
+        String clientIp = GetStringSafely(message, 0);
+        DBG("New client is attempting to connect:" + clientIp );
+        if(clientIp.isNotEmpty()){
+            sendHostInformation(clientIp);
+        }
+        
+        //then have child confirm
+    }else if(path == "/hostinfo" && m_hostMode == false){
+        String t = GetStringSafely(message, 0);
+        DBG("Host IP received: " + t);
+        if(t.isNotEmpty()){
+            m_hostAddr = IPAddress(t);
+            m_sender.connect(m_hostAddr.toString(), 2113);
+            OSCMessage msg("/hostconfirmed");
+            msg.addString(m_addr.toString());
+            if(!m_sender.send(msg)){
+                DBG("Warning: Couldn't confirm host");
+                sendToExternal(OSCMessage("/nohostconfirm"));
+            }else{
+                DBG("Requesting ID from host");
+            }
+        }else{
+            DBG("Warning: Host didn't send an IP!");
+            sendToExternal(OSCMessage("/nohostip"));
+        }
+        
+    }else if (path == "/hostconfirmed" && m_hostMode == true){
+        //add the details back as a child to be used...
+        
+        String childIp = GetStringSafely(message, 0);
+        DBG("Registering " + childIp + " as child");
+        if(childIp.isNotEmpty()){
+            
+            m_childAddresses.push_back(IPAddress(childIp));
+            int childId =int( m_childAddresses.size());
+            DBG("Assigned " + childIp + " child id " + String(childId));
+            OSCMessage msg("/childid");
+            msg.addInt32(childId);
+            if(m_sender.connect(childIp, 2112)){
+                if(!m_sender.send(msg)){
+                    DBG("Warning: Couldn't send ID to child");
+                    sendToExternal(OSCMessage("/cantconnecttochild"));
+                }else{
+                    DBG("Id sent to child " + childIp);
+                }
+            }else{
+                DBG("Warning: couldn't connect to child");
+                sendToExternal(OSCMessage("/cantconnecttochild"));
+            }
+            
+        }else{
+            DBG("Warning: Child didn't send IP");
+            sendToExternal(OSCMessage("/nochildip"));
+        }
+        
+    }else if(path == "/childid" && m_hostMode == false){
+        
+        int id = GetIntSafely(message, 0);
+        if(id >=0){
+            m_childId = id;
+            OSCMessage msg("/childid");
+            msg.addInt32(m_childId);
+            sendToExternal(msg);
+        }
+        
     }
+    
     
 
 };
+void PiGranulesApp::sendHostInformation(String targetIp){
+    m_sender.connect(targetIp, 2112);
+    OSCMessage msg("/hostinfo");
+    msg.addString(m_addr.toString());
+    if(!m_sender.send(msg)){
+        DBG("Warning could not send out host information");
+    };
+}
+void PiGranulesApp::searchForHost(){
+    if(m_hostMode){
+        DBG("You are on the host!");
+        return;
+    }
+    DBG("Searching for host");
+
+    static bool searching = true;
+    for(int n = 0 ; n < 255; ++n){
+        
+        String newIpString = String("192.168.0.") + String(n);
+        
+        if(m_sender.connect(newIpString, 2113)){
+            OSCMessage msg("/queryhost");
+            
+            msg.addString(m_addr.toString());
+            
+            m_sender.send(msg);
+            
+            m_sender.disconnect();
+        };
+        
+    }
+    Timer::callAfterDelay(5000, [this](){
+        if(searching == true){
+            DBG("Warning: Could not find host");
+            sendToExternal(OSCMessage("/hostmissing"));
+        }
+    });
+}
+
+
+void PiGranulesApp::sendToExternal(const OSCMessage& msg){
+    if(m_externalUIConnected){
+        m_externalUISender.send(msg);
+    }
+}
+
+
+
+
+////////
+
 
 void PiGranulesApp::shutdown()
 {

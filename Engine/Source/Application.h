@@ -45,6 +45,7 @@ private:
     bool m_externalUIConnected = false;
     IPAddress m_addr,m_hostAddr;
     OSCSender m_sender,m_externalUISender;
+    bool m_searchingForHostState = false;
     std::vector<IPAddress> m_childAddresses;
     int m_childId = -1;
     

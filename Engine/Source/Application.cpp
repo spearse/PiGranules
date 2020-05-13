@@ -49,6 +49,8 @@ void PiGranulesApp::initialise (const String& commandLine)
            }else{
                DBG("Host on port 2113");
            }
+    }else{
+        searchForHost();
     }
     if(!m_externalUISender.connect("127.0.0.1", 2111)){
         DBG("Warning: Couldn't connect to external UI");
@@ -107,8 +109,10 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
         //then have child confirm
     }else if(path == "/hostinfo" && m_hostMode == false){
         String t = GetStringSafely(message, 0);
+        
         DBG("Host IP received: " + t);
         if(t.isNotEmpty()){
+            m_searchingForHostState = false;
             m_hostAddr = IPAddress(t);
             m_sender.connect(m_hostAddr.toString(), 2113);
             OSCMessage msg("/hostconfirmed");
@@ -130,9 +134,22 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
         String childIp = GetStringSafely(message, 0);
         DBG("Registering " + childIp + " as child");
         if(childIp.isNotEmpty()){
-            
-            m_childAddresses.push_back(IPAddress(childIp));
-            int childId =int( m_childAddresses.size());
+            bool childKnown = false;
+            int knownLoc = -1;
+            for(int n = 0 ; n < m_childAddresses.size();++n){
+                if(m_childAddresses[n].toString() == childIp ){
+                    childKnown = true;
+                    knownLoc = n;
+                }
+            }
+            int childId = -1;
+            if(!childKnown){
+                m_childAddresses.push_back(IPAddress(childIp));
+                childId = int( m_childAddresses.size());
+            }else{
+                childId = knownLoc;
+            }
+                  
             DBG("Assigned " + childIp + " child id " + String(childId));
             OSCMessage msg("/childid");
             msg.addInt32(childId);
@@ -158,6 +175,7 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
         int id = GetIntSafely(message, 0);
         if(id >=0){
             m_childId = id;
+            DBG("Assigned ID :" + String(id));
             OSCMessage msg("/childid");
             msg.addInt32(m_childId);
             sendToExternal(msg);
@@ -183,7 +201,7 @@ void PiGranulesApp::searchForHost(){
     }
     DBG("Searching for host");
 
-    static bool searching = true;
+    m_searchingForHostState = true;
     for(int n = 0 ; n < 255; ++n){
         
         String newIpString = String("192.168.0.") + String(n);
@@ -200,7 +218,7 @@ void PiGranulesApp::searchForHost(){
         
     }
     Timer::callAfterDelay(5000, [this](){
-        if(searching == true){
+        if(m_searchingForHostState == true){
             DBG("Warning: Could not find host");
             sendToExternal(OSCMessage("/hostmissing"));
         }

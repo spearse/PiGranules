@@ -14,7 +14,7 @@
 void PiGranulesApp::initialise (const String& commandLine)
 {
     DBG("Pi Granules Starting");
-    String init = m_deviceManager.initialiseWithDefaultDevices(0, 1);
+    String init = m_deviceManager.initialiseWithDefaultDevices(0, 2);
     DBG(init);
    
     m_addr = IPAddress::getLocalAddress();
@@ -25,9 +25,23 @@ void PiGranulesApp::initialise (const String& commandLine)
         if(cmd == "--host"){
             m_hostMode = true;
         }
+        static bool LoadFiles = false;
+        if(LoadFiles == true){
+            
+            loadSounds(cmd);
+            
+            LoadFiles = false;
+        }
+        if(cmd == "--files"){
+            LoadFiles = true;
+        }
+        
     }
+    m_deviceManager.addAudioCallback(&m_audioEngine);
     
     m_deviceManager.playTestSound();
+    
+    
     m_oscReceiver.addListener(this);
     bool connected = m_oscReceiver.connect(2112);
     if(!connected){
@@ -232,6 +246,19 @@ void PiGranulesApp::sendToExternal(const OSCMessage& msg){
     }
 }
 
+void PiGranulesApp::loadSounds(String folder){
+    File dir(folder);
+    
+    DBG("Attempting to load " + folder );
+    if(dir.isDirectory()){
+        Array<File> files = dir.findChildFiles (File::TypesOfFileToFind::findFiles,false,"*.wav;*.aiff;*.WAV,*.AIFF");
+        m_audioEngine.loadFiles(files);
+        m_audioEngine.setMainFile(files.size()+1);
+        m_audioEngine.activate();
+    }else{
+        DBG(folder + " is not a folder");
+    }
+}
 
 
 

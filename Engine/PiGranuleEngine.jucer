@@ -5,8 +5,18 @@
     <GROUP id="{B56FD4B6-BBC3-0E32-A261-C6A31E9E44E1}" name="Source">
       <FILE id="ALLhx7" name="Application.cpp" compile="1" resource="0" file="Source/Application.cpp"/>
       <FILE id="E1NvYo" name="Application.h" compile="0" resource="0" file="Source/Application.h"/>
+      <FILE id="cXgs0i" name="CloudCreator.cpp" compile="1" resource="0"
+            file="Source/CloudCreator.cpp"/>
+      <FILE id="bYEQUm" name="CloudCreator.h" compile="0" resource="0" file="Source/CloudCreator.h"/>
       <FILE id="qzM2hA" name="Engine.cpp" compile="1" resource="0" file="Source/Engine.cpp"/>
       <FILE id="HIqyFV" name="Engine.h" compile="0" resource="0" file="Source/Engine.h"/>
+      <FILE id="kBdCFZ" name="Grain.cpp" compile="1" resource="0" file="Source/Grain.cpp"/>
+      <FILE id="YoZDFR" name="Grain.h" compile="0" resource="0" file="Source/Grain.h"/>
+      <FILE id="kZZECF" name="GrainTable.h" compile="0" resource="0" file="Source/GrainTable.h"/>
+      <FILE id="SdTq4i" name="MultiGrainTable.cpp" compile="1" resource="0"
+            file="Source/MultiGrainTable.cpp"/>
+      <FILE id="lUMaHi" name="MultiGrainTable.h" compile="0" resource="0"
+            file="Source/MultiGrainTable.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

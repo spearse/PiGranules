@@ -8,6 +8,7 @@
   ==============================================================================
 */
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Engine.h"
 #include <vector>
 
 #pragma once
@@ -38,6 +39,8 @@ public:
     void sendHostInformation(String targetIp);
     
     void sendToExternal(const OSCMessage& msg);
+    
+    void loadSounds(String folder);
 private:
     AudioDeviceManager m_deviceManager;
     OSCReceiver m_oscReceiver,m_hostOscReceiver;
@@ -48,6 +51,9 @@ private:
     bool m_searchingForHostState = false;
     std::vector<IPAddress> m_childAddresses;
     int m_childId = -1;
+    
+    Engine m_audioEngine;
+    
     
 };
  

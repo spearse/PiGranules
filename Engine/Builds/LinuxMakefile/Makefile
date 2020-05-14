@@ -69,7 +69,10 @@ endif
 
 OBJECTS_CONSOLEAPP := \
   $(JUCE_OBJDIR)/Application_d2fc77b1.o \
+  $(JUCE_OBJDIR)/CloudCreator_fda60140.o \
   $(JUCE_OBJDIR)/Engine_7f3228cb.o \
+  $(JUCE_OBJDIR)/Grain_4c99d65c.o \
+  $(JUCE_OBJDIR)/MultiGrainTable_d307cc8d.o \
   $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o \
   $(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o \
   $(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o \
@@ -95,9 +98,24 @@ $(JUCE_OBJDIR)/Application_d2fc77b1.o: ../../Source/Application.cpp
 	@echo "Compiling Application.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/CloudCreator_fda60140.o: ../../Source/CloudCreator.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling CloudCreator.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/Engine_7f3228cb.o: ../../Source/Engine.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling Engine.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/Grain_4c99d65c.o: ../../Source/Grain.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling Grain.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MultiGrainTable_d307cc8d.o: ../../Source/MultiGrainTable.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling MultiGrainTable.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o: ../../JuceLibraryCode/include_juce_audio_basics.cpp

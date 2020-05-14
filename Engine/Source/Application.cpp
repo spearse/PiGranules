@@ -195,7 +195,7 @@ void PiGranulesApp::sendHostInformation(String targetIp){
     };
 }
 void PiGranulesApp::searchForHost(){
-    if(m_hostMode){
+    if(m_hostMode==true){
         DBG("You are on the host!");
         return;
     }

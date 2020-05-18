@@ -10,6 +10,11 @@
 
 #include "Application.h"
 
+PiGranulesApp::PiGranulesApp():
+    m_audioEngine(this)
+{
+    
+}
 
 void PiGranulesApp::initialise (const String& commandLine)
 {
@@ -89,6 +94,8 @@ inline int GetIntSafely(const OSCMessage& msg,int pos){
     if(pos < msg.size() && pos >=0){
         if(msg[pos].isInt32()){
             t = msg[pos].getInt32();
+        }else if(msg[pos].isFloat32()){
+            t = int(msg[pos].getFloat32());
         }
     }
     return t;
@@ -99,11 +106,15 @@ inline int GetFloatSafely(const OSCMessage& msg,int pos){
     if(pos < msg.size() && pos >=0){
         if(msg[pos].isFloat32()){
             t = msg[pos].getFloat32();
+        }else if(msg[pos].isInt32()){
+            t = float(msg[pos].isInt32());
         }
     }
     return t;
 };
-
+inline void setValue(std::function<void>(float),const OSCMessage& message,int index){
+    
+}
 
 void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
     String path = message.getAddressPattern().toString();
@@ -195,6 +206,52 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
             sendToExternal(msg);
         }
         
+    }else if(path == "/spawnrate"){
+        if(!message.isEmpty()){
+            float spawnR = GetFloatSafely(message, 0);
+            if(spawnR != -666){
+                m_audioEngine.getCloudCreator().set_spawnRate(spawnR);
+            }
+        }
+    }else if (path == "/grainsize"){
+        if(!message.isEmpty()){
+            float size = GetIntSafely(message, 0);
+            if(size != -666){
+                m_audioEngine.getCloudCreator().set_grainSize(size);
+            }
+        }
+    }else if(path == "/numgrains"){
+        if(!message.isEmpty()){
+            float numG = GetIntSafely(message, 0);
+            if(numG != -666){
+                m_audioEngine.getCloudCreator().set_numGrains(numG);
+            }
+        }
+    }else if(path == "/playspeed"){
+        if(!message.isEmpty()){
+            float speed = GetFloatSafely(message, 0);
+            if(speed != -666){
+                m_audioEngine.getCloudCreator().set_spawnRate(speed);
+            }
+        }
+    }else if (path == "/grainpitch"){
+        if(!message.isEmpty()){
+            float pitch = GetFloatSafely(message, 0);
+            if(pitch != -666){
+                m_audioEngine.getCloudCreator().set_grainPitch(pitch);
+            }
+        }
+    }else if(path == "/startpos"){
+        if(!message.isEmpty()){
+            float start = GetFloatSafely(message, 0);
+            if(start != -666){
+                m_audioEngine.getCloudCreator().set_startPos(start);
+            }
+        }
+    }else if(path == "/spawnmode"){
+        
+    }else if(path == "/spawn"){
+        m_audioEngine.getCloudCreator().spawn();
     }
     
     
@@ -260,7 +317,19 @@ void PiGranulesApp::loadSounds(String folder){
     }
 }
 
-
+void PiGranulesApp::sendToClient(int index, OSCMessage msg){
+    if(index >=0 && index < m_childAddresses.size()){
+        if(m_sender.connect(m_childAddresses[index].toString(), 2112)){
+                m_sender.send(msg);
+        };
+        
+    }
+    
+}
+void PiGranulesApp::spawnOnClient(int index){
+    OSCMessage msg("/spawn");
+    sendToClient(index, msg);
+}
 
 ////////
 

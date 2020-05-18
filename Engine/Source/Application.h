@@ -15,7 +15,7 @@
 class PiGranulesApp  : public JUCEApplicationBase, public OSCReceiver::Listener<OSCReceiver::RealtimeCallback>
 {
 public:
-    PiGranulesApp()  {}
+    PiGranulesApp();
     ~PiGranulesApp() {}
  
     void initialise (const String& commandLine) override;
@@ -41,6 +41,19 @@ public:
     void sendToExternal(const OSCMessage& msg);
     
     void loadSounds(String folder);
+    
+    //for all clients.. receiving and setting.... - if host forward these on???
+    void setSpawnRate(float rate);
+    void setGrainSize(int size);
+    void setNumGrains(int numGrains);
+    void setPlayBackSpeed(float speed);
+    void setGrainPitch(float pitch);
+    void setStartPos(float pos);
+    
+    friend class Engine;
+    
+    void sendToClient(int index, OSCMessage msg);
+    void spawnOnClient(int index);
 private:
     AudioDeviceManager m_deviceManager;
     OSCReceiver m_oscReceiver,m_hostOscReceiver;

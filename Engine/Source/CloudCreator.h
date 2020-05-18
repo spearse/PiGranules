@@ -34,6 +34,7 @@ class CloudCreator
 
 	float scaledRandom(float lowerBound, float upperBound, float randomScale, float randomAmount);
 
+    bool m_freeRun = true;
     
     
     
@@ -59,9 +60,15 @@ public:
 	void set_grainPitch(float pitch);
 	void set_startPos(float pos);
 
+    
 
 	void set_randGrainPitch(float amount);
 	void set_randStartPos(float amount);
     
     void set_tableIndex(float tableIndex);
+    
+    void set_freeRunState(bool state);
+    
+    void spawn();
+    std::function<void()> trigger;
 };

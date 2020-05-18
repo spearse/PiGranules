@@ -31,6 +31,7 @@ m_randStartPosAmount(0),
 m_spawnTableIndex(1)
 {
     
+    trigger = [this](){};
     updatePhasor();
     
     set_startPos(0);
@@ -43,7 +44,7 @@ m_spawnTableIndex(1)
 float CloudCreator::scaledRandom(float lowerBound, float upperBound, float randomScale, float randomAmount) {
     
     //	float t = ((((rand() % 10000)* 0.0001)* randomAmount )*randomScale)+ (upperBound - lowerBound) * 0.5;
-    float t =( (((rand() % 10000)* 0.0001) * randomAmount)  * ( upperBound - lowerBound) )- lowerBound;
+    float t =( (((rand() % 10000)* 0.0001) * randomAmount)  * ( upperBound - lowerBound) )+ lowerBound;
     if (t > upperBound)t = upperBound;
     if (t < lowerBound)t = lowerBound;
     return 1;
@@ -62,29 +63,32 @@ void CloudCreator::process(float* left, float* right, int blocksize) {
         bool needsToSpawn = false;
         for (int n = 0; n < blocksize; ++n) {
             
-            m_samplesToNextSpawn -= 1;
-            if (m_samplesToNextSpawn <= 0) needsToSpawn = true;
-            if (needsToSpawn == true) {
-                int grainsAlive = 0;
-                static int spawnCount = 0;
-                for (int g = 0; g < m_numGrains; ++g) {
-                    //	DBG(g);
-                    if (m_childGrains[g].available() == true && needsToSpawn == true) {
-                        int audioSize =m_multiGrain.get_table(1)->get_size();
-                        float rStart = (scaledRandom(0, 1, m_randStartPosAmount, m_randStartPosAmount)*audioSize);
-                        m_childGrains[g].spawn(m_grainSize, (m_phasor.get_phase() * audioSize) + (m_startPos * audioSize) , m_grainPitch ,m_sampleRate, m_spawnTableIndex   );
-                        ++spawnCount;
-                        //	DBG("Spawncount " += spawnCount);
-                        needsToSpawn = false;
+            if(m_freeRun){
+                
+                m_samplesToNextSpawn -= 1;
+                if (m_samplesToNextSpawn <= 0) needsToSpawn = true;
+                if (needsToSpawn == true) {
+                    int grainsAlive = 0;
+                    for (int g = 0; g < m_numGrains; ++g) {
+                        //	DBG(g);
+                        if (  needsToSpawn == true) {
+                            spawn();
+                            //	DBG("Spawncount " += spawnCount);
+                            needsToSpawn = false;
+                        }
+                        else {
+                            ++grainsAlive;
+                        }
+                        
                     }
-                    else {
-                        ++grainsAlive;
-                    }
-                    
+                    //	DBG("Grains:" += grainsAlive);
+                    m_samplesToNextSpawn = (m_sampleRate*0.001) * m_spawnRateMS;
                 }
-                //	DBG("Grains:" += grainsAlive);
-                m_samplesToNextSpawn = (m_sampleRate*0.001) * m_spawnRateMS;
+                
             }
+                
+            
+            
             
             for (int grain = 0; grain < m_numGrains; ++grain) {
                 
@@ -97,7 +101,25 @@ void CloudCreator::process(float* left, float* right, int blocksize) {
     }
     
     
-}void CloudCreator::stop() {
+}
+
+void CloudCreator::spawn(){
+    
+    trigger();
+    
+    for(int g = 0 ; g < m_maxNumGrains;++g){
+        if(m_childGrains[g].available()){
+    
+            int audioSize =m_multiGrain.get_table(1)->get_size();
+            float rStart = (scaledRandom(0, 1, m_randStartPosAmount, m_randStartPosAmount)*audioSize);
+            m_childGrains[g].spawn(m_grainSize, (m_phasor.get_phase() * audioSize) + (m_startPos * audioSize) , m_grainPitch ,m_sampleRate, m_spawnTableIndex   );
+            return;
+        }
+    }
+}
+
+
+void CloudCreator::stop() {
     
     m_play = false;
     
@@ -167,9 +189,9 @@ void CloudCreator::set_tableIndex(float tableIndex){
     if(tableIndex < 0)tableIndex = 0;
     if(tableIndex > m_multiGrain.get_numberTables()) tableIndex =m_multiGrain.get_numberTables();
     m_spawnTableIndex = tableIndex;
-    std::cout << m_spawnTableIndex <<std::endl;
+  //  std::cout << m_spawnTableIndex <<std::endl;
     
-
+    
 }
 
 GrainTable* CloudCreator::get_lastTable(){
@@ -192,4 +214,8 @@ void CloudCreator::deactivate_allGrains(){
         g.deactivate();
     }
     
+}
+
+void CloudCreator::set_freeRunState(bool state){
+    m_freeRun = state;
 }

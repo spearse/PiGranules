@@ -12,14 +12,21 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CloudCreator.h"
 
+class PiGranulesApp;
+
 class Engine : public AudioIODeviceCallback {
     bool m_freeRun = true;
     bool m_activated = false;
+    bool m_triggerExternal = true;
+    bool m_sequenceExternal = true;
     
     CloudCreator m_cloudCreator;
     AudioFormatManager m_formatManager;
+    
+    PiGranulesApp* m_parent;
 public:
-    Engine();
+    
+    Engine(PiGranulesApp* parent);
     
     void activate();
     void deactivate();
@@ -32,6 +39,10 @@ public:
     void     audioDeviceAboutToStart (AudioIODevice *device)override;
     
     void     audioDeviceStopped ()override;
+    
+    CloudCreator& getCloudCreator();
+    
+    void sequenceExternal();
     
     
 };

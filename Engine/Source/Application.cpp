@@ -76,8 +76,42 @@ void PiGranulesApp::initialise (const String& commandLine)
     };
     
     
+    
+    m_audioEngine.externalAudioCallback = [this](const AudioSampleBuffer& buffer){
+      
+        OSCMessage msg("/rawaudio");
+        msg.addInt32(buffer.getNumChannels());
+        msg.addInt32(buffer.getNumSamples());
+        
+        for(int c = 0 ; c < buffer.getNumChannels();++c){
+            
+            for(int s = 0 ; s < buffer.getNumSamples();++s){
+                
+                msg.addFloat32(buffer.getSample(c, s));
+                
+            }
+            
+        }
+        sentToAllClients(msg);
+        
+        
+        
+    };
+    
+    
 }
-
+void PiGranulesApp::sentToAllClients(const OSCMessage& msg){
+    for(int n = 0 ; n < m_childAddresses.size();++n){
+        m_sender.disconnect();
+        if(m_sender.connect(m_childAddresses[n].toString(), 2112)){
+                    m_sender.send(msg);
+        };
+        m_sender.disconnect();
+            
+        
+        
+    }
+}
 
 inline String GetStringSafely(const OSCMessage& msg,int pos){
     String t;
@@ -102,7 +136,7 @@ inline int GetIntSafely(const OSCMessage& msg,int pos){
 };
 
 inline int GetFloatSafely(const OSCMessage& msg,int pos){
-    float t = -666;
+    float t = 0;
     if(pos < msg.size() && pos >=0){
         if(msg[pos].isFloat32()){
             t = msg[pos].getFloat32();
@@ -252,6 +286,25 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
         
     }else if(path == "/spawn"){
         m_audioEngine.getCloudCreator().spawn();
+    }else if(path == "/rawaudio"){
+        
+        AudioSampleBuffer& buffer = m_audioEngine.getActiveInputBuffer();
+        
+        int chans = GetIntSafely(message, 0);
+        int samps = GetIntSafely(message, 1);
+        if(chans > 0 && samps > 0 ){
+            buffer.setSize(chans, samps);
+            int p = 2;
+            for(int c =0; c < chans;++c){
+                for(int s = 0; s < samps;++s){
+                    buffer.setSample(c, s, GetFloatSafely(message ,p) );
+                    ++p;
+                }
+            }
+            
+            
+        }
+        
     }
     
     
@@ -319,9 +372,11 @@ void PiGranulesApp::loadSounds(String folder){
 
 void PiGranulesApp::sendToClient(int index, OSCMessage msg){
     if(index >=0 && index < m_childAddresses.size()){
+        m_sender.disconnect();
         if(m_sender.connect(m_childAddresses[index].toString(), 2112)){
                 m_sender.send(msg);
         };
+        m_sender.disconnect();
         
     }
     

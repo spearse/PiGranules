@@ -53,6 +53,7 @@ public:
     friend class Engine;
     
     void sendToClient(int index, OSCMessage msg);
+    void sentToAllClients(const OSCMessage& msg);
     void spawnOnClient(int index);
 private:
     AudioDeviceManager m_deviceManager;

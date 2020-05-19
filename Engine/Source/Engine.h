@@ -24,6 +24,13 @@ class Engine : public AudioIODeviceCallback {
     AudioFormatManager m_formatManager;
     
     PiGranulesApp* m_parent;
+    
+    AudioSampleBuffer m_outBufferA,m_outBufferB;
+    AudioSampleBuffer m_inputBufferA,m_inputBufferB;
+    bool m_useOutBufferA = true;
+    bool m_useInputBufferA = true;
+    
+    bool m_useRemoteAudio = true;
 public:
     
     Engine(PiGranulesApp* parent);
@@ -42,7 +49,11 @@ public:
     
     CloudCreator& getCloudCreator();
     
+    std::function<void(const AudioSampleBuffer&)> externalAudioCallback;
+
     void sequenceExternal();
     
+    AudioSampleBuffer& getActiveInputBuffer();
     
+    void useRemoteAudio(bool state);
 };

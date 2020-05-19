@@ -71,4 +71,5 @@ public:
     
     void spawn();
     std::function<void()> trigger;
+    
 };

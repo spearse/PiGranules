@@ -15,7 +15,8 @@
 Engine::Engine(PiGranulesApp* parent):
 m_parent(parent)
 {
-    
+    externalAudioCallback = [this](const AudioSampleBuffer& buffer){};
+
     m_formatManager.registerBasicFormats();
     
     m_cloudCreator.trigger = [this](){
@@ -54,9 +55,42 @@ void    Engine::audioDeviceIOCallback (const float **inputChannelData, int numIn
         }
         
     }
-    if( m_activated){
+    if( m_activated==true && m_useRemoteAudio == false){
         m_cloudCreator.process(outputChannelData[0], outputChannelData[1], numSamples);
     }
+    
+    if(m_useRemoteAudio){
+        //channel counts should match!
+        if(m_useInputBufferA){
+            for (int c = 0 ; c < m_inputBufferA.getNumChannels();++c){
+                for(int n = 0 ;  n < m_inputBufferA.getNumSamples();++n){
+                    outputChannelData[c][n] = m_inputBufferA.getSample(c, n);
+                }
+            }
+            m_inputBufferA.clear();
+        }else{
+            for (int c = 0 ; c < m_inputBufferB.getNumChannels();++c){
+                for(int n = 0 ;  n < m_inputBufferB.getNumSamples();++n){
+                    outputChannelData[c][n] = m_inputBufferB.getSample(c, n);
+                }
+            }
+            m_inputBufferB.clear();
+        }
+        m_useInputBufferA = ! m_useInputBufferA;
+    }
+    
+    static AudioSampleBuffer t(outputChannelData,numOutputChannels,numSamples);
+    
+    if(m_useOutBufferA){
+        
+        m_outBufferA.makeCopyOf(t);
+        externalAudioCallback(m_outBufferA);
+    }else{
+        m_outBufferB.makeCopyOf(t);
+        externalAudioCallback(m_outBufferB);
+    }
+    m_useOutBufferA = !m_useOutBufferA;
+    
     
     
 };
@@ -64,6 +98,9 @@ void    Engine::audioDeviceIOCallback (const float **inputChannelData, int numIn
 void     Engine::audioDeviceAboutToStart (AudioIODevice *device){
     m_cloudCreator.prepareToPlay(device->getCurrentSampleRate());
     
+    m_outBufferA.setSize(device->getOutputChannelNames().size(), device->getCurrentBufferSizeSamples());
+    m_outBufferB.setSize(device->getOutputChannelNames().size(), device->getCurrentBufferSizeSamples());
+
     
 };
 
@@ -101,3 +138,17 @@ void Engine::sequenceExternal(){
     }
     
 }
+
+AudioSampleBuffer& Engine::getActiveInputBuffer(){
+    if(m_useInputBufferA){
+        return m_inputBufferB;
+    }else{
+        return m_inputBufferA;
+    }
+}
+
+void Engine::useRemoteAudio(bool state){
+    m_useRemoteAudio = state;
+}
+
+

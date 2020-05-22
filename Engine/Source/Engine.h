@@ -30,7 +30,7 @@ class Engine : public AudioIODeviceCallback {
     bool m_useOutBufferA = true;
     bool m_useInputBufferA = true;
     
-    bool m_useRemoteAudio = true;
+    bool m_useRemoteAudio = false;
 public:
     
     Engine(PiGranulesApp* parent);

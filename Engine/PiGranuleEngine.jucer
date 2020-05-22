@@ -13,6 +13,9 @@
       <FILE id="kBdCFZ" name="Grain.cpp" compile="1" resource="0" file="Source/Grain.cpp"/>
       <FILE id="YoZDFR" name="Grain.h" compile="0" resource="0" file="Source/Grain.h"/>
       <FILE id="kZZECF" name="GrainTable.h" compile="0" resource="0" file="Source/GrainTable.h"/>
+      <FILE id="NM6EKI" name="HostInterface.cpp" compile="1" resource="0"
+            file="Source/HostInterface.cpp"/>
+      <FILE id="EGtF6B" name="HostInterface.h" compile="0" resource="0" file="Source/HostInterface.h"/>
       <FILE id="SdTq4i" name="MultiGrainTable.cpp" compile="1" resource="0"
             file="Source/MultiGrainTable.cpp"/>
       <FILE id="lUMaHi" name="MultiGrainTable.h" compile="0" resource="0"
@@ -32,6 +35,9 @@
         <MODULEPATH id="juce_core" path="../../JUCE_old(3)/modules"/>
         <MODULEPATH id="juce_events" path="../../JUCE_old(3)/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE547/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
@@ -46,6 +52,9 @@
         <MODULEPATH id="juce_core" path="../../JUCE_old(3)/modules"/>
         <MODULEPATH id="juce_events" path="../../JUCE_old(3)/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE547/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE547/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
@@ -54,7 +63,10 @@
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>

@@ -62,6 +62,10 @@ void PiGranulesApp::initialise (const String& commandLine)
         m_hostAddr = m_addr;
          bool connected = m_oscReceiver.connect(2113);
         DBG("Setting up host");
+        
+        mainInteface.reset(new MainWindow("Pi Granules Host",this));
+        mainInteface->addToDesktop();
+        
         if(!connected){
                DBG("Could not setup host to listen on port 2113. Please ensure this port is free!");
                JUCEApplicationBase::quit();
@@ -391,6 +395,7 @@ void PiGranulesApp::spawnOnClient(int index){
 
 void PiGranulesApp::shutdown()
 {
+    mainInteface = nullptr;
 }
 
 const String PiGranulesApp::getApplicationName()
@@ -410,14 +415,18 @@ bool  PiGranulesApp::moreThanOneInstanceAllowed (){
 void     PiGranulesApp::anotherInstanceStarted (const String &commandLine){
 };
 void     PiGranulesApp::systemRequestedQuit (){
+        m_audioEngine.deactivate();
+        m_deviceManager.closeAudioDevice();
+        quit();
 };
 void     PiGranulesApp::suspended (){
 };
 void     PiGranulesApp::resumed (){
 };
 
-void     PiGranulesApp::unhandledException (const std::exception*,const String& sourceFilename,int lineNumber){
-    DBG("Unhandled exception " + sourceFilename + String(lineNumber));
-    JUCEApplicationBase::quit();
+void     PiGranulesApp::unhandledException (const std::exception*,const String&     sourceFilename,int lineNumber){
+        DBG("Unhandled exception " + sourceFilename + String(lineNumber));
+        JUCEApplicationBase::quit();
 }
+
 START_JUCE_APPLICATION (PiGranulesApp)

@@ -52,7 +52,7 @@ public:
     void setStartPos(float pos);
     
     friend class Engine;
-    
+    friend class HostInterface;
     void sendToClient(int index, OSCMessage msg);
     void sentToAllClients(const OSCMessage& msg);
     void spawnOnClient(int index);

@@ -74,6 +74,7 @@ OBJECTS_CONSOLEAPP := \
   $(JUCE_OBJDIR)/Grain_4c99d65c.o \
   $(JUCE_OBJDIR)/HostInterface_f0793352.o \
   $(JUCE_OBJDIR)/MultiGrainTable_d307cc8d.o \
+  $(JUCE_OBJDIR)/SliderController_110366.o \
   $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o \
   $(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o \
   $(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o \
@@ -125,6 +126,11 @@ $(JUCE_OBJDIR)/HostInterface_f0793352.o: ../../Source/HostInterface.cpp
 $(JUCE_OBJDIR)/MultiGrainTable_d307cc8d.o: ../../Source/MultiGrainTable.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling MultiGrainTable.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SliderController_110366.o: ../../Source/SliderController.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling SliderController.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o: ../../JuceLibraryCode/include_juce_audio_basics.cpp

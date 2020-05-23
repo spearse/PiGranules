@@ -31,6 +31,12 @@ class Engine : public AudioIODeviceCallback {
     bool m_useInputBufferA = true;
     
     bool m_useRemoteAudio = false;
+    
+    NormalisableRange<float> m_spawnRateMSRange, m_grainPitchRange,m_startPosRange, m_masterPlaybackSpeedRange,m_spawnTableIndexRange;
+    
+    //int m_maxNumGrains, m_numGrains ,m_samplesToNextSpawn,m_grainSize
+    friend class PiGranulesApp;
+    friend class HostInterface;
 public:
     
     Engine(PiGranulesApp* parent);
@@ -56,4 +62,7 @@ public:
     AudioSampleBuffer& getActiveInputBuffer();
     
     void useRemoteAudio(bool state);
+    
+    
+        
 };

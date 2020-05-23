@@ -13,7 +13,12 @@
 
 
 Engine::Engine(PiGranulesApp* parent):
-m_parent(parent)
+m_parent(parent),
+m_spawnRateMSRange(1,10000),
+m_grainPitchRange(-10,10),
+m_startPosRange(0,1),
+m_masterPlaybackSpeedRange(-3,3),
+m_spawnTableIndexRange(1,2)
 {
     externalAudioCallback = [this](const AudioSampleBuffer& buffer){};
 
@@ -39,6 +44,7 @@ void Engine::loadFiles(Array<File> files){
             for(int n = 0; n  < numSamples ; ++ n){
                 t->set_sample(n, samples.getSample(0, n));
             }
+            DBG(file.getFileName() + String(" Loaded"));
         }
     }
     

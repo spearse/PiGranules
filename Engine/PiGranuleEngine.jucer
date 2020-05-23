@@ -20,6 +20,10 @@
             file="Source/MultiGrainTable.cpp"/>
       <FILE id="lUMaHi" name="MultiGrainTable.h" compile="0" resource="0"
             file="Source/MultiGrainTable.h"/>
+      <FILE id="VjGhnV" name="SliderController.cpp" compile="1" resource="0"
+            file="Source/SliderController.cpp"/>
+      <FILE id="tRuXwd" name="SliderController.h" compile="0" resource="0"
+            file="Source/SliderController.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

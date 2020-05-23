@@ -127,11 +127,12 @@ void PiGranulesApp::initialise (const String& commandLine)
 void PiGranulesApp::sentToAllClients(const OSCMessage& msg){
     for(int n = 0 ; n < m_childAddresses.size();++n){
         m_sender.disconnect();
+        if(m_childAddresses[n].toString().isNotEmpty()){
         if(m_sender.connect(m_childAddresses[n].toString(), 2112)){
                     m_sender.send(msg);
         };
         m_sender.disconnect();
-            
+        }
         
         
     }

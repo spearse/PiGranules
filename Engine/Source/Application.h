@@ -68,7 +68,7 @@ public:
                 m_parent(parent)
             {
                 setUsingNativeTitleBar (true);
-                setContentOwned (new HostInterface(parent), true);
+                setContentOwned (m_interface = new HostInterface(parent), true);
 
                #if JUCE_IOS || JUCE_ANDROID
                 setFullScreen (true);
@@ -95,7 +95,7 @@ public:
                you really have to override any DocumentWindow methods, make sure your
                subclass also calls the superclass's method.
             */
-
+            HostInterface* m_interface;
         private:
             PiGranulesApp* m_parent;
             

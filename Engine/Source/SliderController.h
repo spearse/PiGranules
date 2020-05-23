@@ -14,11 +14,12 @@
 
 class SliderController : public Component{
     Slider m_slider;
-    NormalisableRange<float>& m_range;
-    float m_output;
+    NormalisableRange<double>* m_range = nullptr;
     Label m_label;
 public:
-    SliderController(NormalisableRange<float>& range);
-    
+    SliderController();
+    void setup(NormalisableRange<double>* range,String name);
     void resized()override;
+    
+    std::function<void(float)> sliderMoved;
 };

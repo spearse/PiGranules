@@ -9,6 +9,7 @@
  */
 
 #include "Application.h"
+#include "SliderController.h"
 
 PiGranulesApp::PiGranulesApp():
     m_audioEngine(this)
@@ -64,6 +65,25 @@ void PiGranulesApp::initialise (const String& commandLine)
         DBG("Setting up host");
         
         mainInteface.reset(new MainWindow("Pi Granules Host",this));
+        
+        //setup sliders now...
+        
+        mainInteface->m_interface->m_spawnRateController.setup(&m_audioEngine.m_spawnRateMSRange, "Spawn Rate");
+        mainInteface->m_interface->m_spawnRateController.sliderMoved = [this](float value){
+            
+            OSCMessage msg("/spawnrate");
+            msg.addFloat32(value);
+            sentToAllClients(msg);
+            
+            
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_spawnRate(value);
+            
+        };
+        
+       // m_audioEngine.getCloudCreator().set_spawnRate(10);
+        
+        
         mainInteface->addToDesktop();
         
         if(!connected){

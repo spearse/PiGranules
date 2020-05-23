@@ -14,8 +14,7 @@
 
 HostInterface::HostInterface(PiGranulesApp* parent):
     m_parent(parent),
-    m_test("Hello","Hello"),
-m_spawnRateController(parent->m_audioEngine.m_spawnRateMSRange)
+    m_test("Hello","Hello")
 {
     addAndMakeVisible(m_test);
     addAndMakeVisible(m_spawnRateController);

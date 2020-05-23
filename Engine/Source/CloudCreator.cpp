@@ -38,8 +38,8 @@ m_spawnTableIndex(1)
     set_playBackSpeed(0);
     set_grainSize(44100);
     set_numGrains(1);
-    set_spawnRate(4);
-    
+    set_spawnRate(1000);
+  
 }
 float CloudCreator::scaledRandom(float lowerBound, float upperBound, float randomScale, float randomAmount) {
     
@@ -64,33 +64,20 @@ void CloudCreator::process(float* left, float* right, int blocksize) {
         for (int n = 0; n < blocksize; ++n) {
             
             if(m_freeRun){
-                
                 m_samplesToNextSpawn -= 1;
                 if (m_samplesToNextSpawn <= 0) needsToSpawn = true;
                 if (needsToSpawn == true) {
-                    int grainsAlive = 0;
-                    for (int g = 0; g < m_numGrains; ++g) {
-                        //	DBG(g);
-                        if (  needsToSpawn == true) {
-                            spawn();
-                            //	DBG("Spawncount " += spawnCount);
-                            needsToSpawn = false;
-                        }
-                        else {
-                            ++grainsAlive;
-                        }
-                        
-                    }
-                    //	DBG("Grains:" += grainsAlive);
+                    spawn();
+                    //	DBG("Spawncount " += spawnCount);
+                    needsToSpawn = false;
                     m_samplesToNextSpawn = (m_sampleRate*0.001) * m_spawnRateMS;
                 }
                 
-            }
                 
+            }
+            //	DBG("Grains:" += grainsAlive);
             
-            
-            
-            for (int grain = 0; grain < m_numGrains; ++grain) {
+            for (int grain = 0; grain < m_childGrains.size(); ++grain) {
                 
                 m_childGrains[grain].process(left, right, n, &m_multiGrain, m_multiGrain.get_table(0));
                 //DBG("Grains " += grain );
@@ -109,7 +96,7 @@ void CloudCreator::spawn(){
     
     for(int g = 0 ; g < m_maxNumGrains;++g){
         if(m_childGrains[g].available()){
-    
+            
             int audioSize =m_multiGrain.get_table(1)->get_size();
             float rStart = (scaledRandom(0, 1, m_randStartPosAmount, m_randStartPosAmount)*audioSize);
             m_childGrains[g].spawn(m_grainSize, (m_phasor.get_phase() * audioSize) + (m_startPos * audioSize) , m_grainPitch ,m_sampleRate, m_spawnTableIndex   );
@@ -189,7 +176,7 @@ void CloudCreator::set_tableIndex(float tableIndex){
     if(tableIndex < 0)tableIndex = 0;
     if(tableIndex > m_multiGrain.get_numberTables()) tableIndex =m_multiGrain.get_numberTables();
     m_spawnTableIndex = tableIndex;
-  //  std::cout << m_spawnTableIndex <<std::endl;
+    //  std::cout << m_spawnTableIndex <<std::endl;
     
     
 }

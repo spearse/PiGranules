@@ -18,7 +18,7 @@ class Engine : public AudioIODeviceCallback {
     bool m_freeRun = true;
     bool m_activated = false;
     bool m_triggerExternal = true;
-    bool m_sequenceExternal = true;
+    bool m_sequenceExternal = false;
     
     CloudCreator m_cloudCreator;
     AudioFormatManager m_formatManager;
@@ -32,7 +32,7 @@ class Engine : public AudioIODeviceCallback {
     
     bool m_useRemoteAudio = false;
     
-    NormalisableRange<float> m_spawnRateMSRange, m_grainPitchRange,m_startPosRange, m_masterPlaybackSpeedRange,m_spawnTableIndexRange;
+    NormalisableRange<double> m_spawnRateMSRange, m_grainPitchRange,m_startPosRange, m_masterPlaybackSpeedRange,m_spawnTableIndexRange;
     
     //int m_maxNumGrains, m_numGrains ,m_samplesToNextSpawn,m_grainSize
     friend class PiGranulesApp;

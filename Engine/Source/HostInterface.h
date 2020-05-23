@@ -17,6 +17,7 @@ class HostInterface : public Component{
     PiGranulesApp* m_parent;
     TextButton m_test;
     
+    friend class PiGranulesApp;
 public:
     HostInterface(PiGranulesApp* parent);
     void resized()override;

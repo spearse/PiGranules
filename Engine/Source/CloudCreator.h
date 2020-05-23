@@ -39,7 +39,7 @@ class CloudCreator
     
     
 public:
-	CloudCreator(float samplerate = 44100.0f, float spawnRateMS = 1000, int maxGrains = 100, int numGrains = 8,int grainSize=44100);
+	CloudCreator(float samplerate = 44100.0f, float spawnRateMS = 100, int maxGrains = 100, int numGrains = 100,int grainSize=44100);
 
 	void prepareToPlay(float sampleRate);
 	void process(float* left, float* right, int blocksize);

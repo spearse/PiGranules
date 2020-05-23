@@ -108,12 +108,12 @@ public:
 	}
 	void fill_sawP(float pow) {
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] =  std::powf( float(n) / m_size,pow);
+			m_table[n] =  std::pow( float(n) / m_size,pow);
 		}
 	}
 	void fill_inverses_sawP(float pow) {
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = std::powf(float(m_size - n) / m_size, pow);
+			m_table[n] = std::pow(float(m_size - n) / m_size, pow);
 		}
 	}
 	void fill_openSquare() {

@@ -29,7 +29,11 @@ public:
 		, m_frequency(frequency)
 	{
 	}
+    void set_sampleRate(float sampleRate){
+        m_sr = sampleRate;
+        m_delta = m_frequency / m_sr;
 
+    }
 	float get_frequency() const { return m_frequency; }
 
 	void set_frequency(float frequency)
@@ -62,80 +66,108 @@ public:
 
 class GrainTable {
 	long long int m_size;
-	std::vector<float> m_table;
+    typedef std::vector<float> Table;
+    typedef std::vector<Table> MultiChannelTable;
+	MultiChannelTable m_tables;
+    float m_baseSampleRate;
 public:
-	GrainTable(int size) :
-		m_size(size),
-		m_table(size)
+    GrainTable(int size,int numChannels = 1) :
+		m_size(size)
 	{
+        for(int n = 0 ; n < numChannels;++n){
+            m_tables.push_back(Table(m_size));
+        }
 		fill_sine();
 	}
-	void fill_sine(float pitch = 1.0f) {
-
+	void fill_sine(float pitch = 1.0f,int table= 0) {
+        if(table  <0 || table >= m_tables.size())return;
+        
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = sin((3.14159 * 2.0f * n * pitch) / m_size);
+			m_tables[table][n] = sin((3.14159 * 2.0f * n * pitch) / m_size);
 		}
 
 	}
 	void set_size(int size) {
-		m_size = size;
-		std::vector<float>  t(size);
-		m_table = t;
+        m_size = size;
+        for(int n = 0 ; n < m_tables.size();++n){
+            std::vector<float>  t(size);
+            m_tables[n] = t;
+        }
 	}
-	void set_sample(int index, float sample) {
+	void set_sample(int index, float sample,int table=0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		if (index >= 0 && index < m_size) {
-			m_table[index] = sample;
+			m_tables[table][index] = sample;
 		}
 	}
-	void fill_hann() {
+	void fill_hann(int table=0) {
+        if(table  <0 || table >= m_tables.size())return;
 
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = 0.5 * (1 - cos(  (3.14159*2.0f*n)/m_size        ));
+			m_tables[table][n] = 0.5 * (1 - cos(  (3.14159*2.0f*n)/m_size        ));
 		}
 	}
 	int get_size() {
 		return m_size - 1;
 	}
-	void fill_saw() {
+	void fill_saw(int table = 0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = float(n) / m_size;
+			m_tables[table][n] = float(n) / m_size;
 		}
 	}
-	void fill_inverse_saw() {
+	void fill_inverse_saw(int table = 0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = float(m_size - n) / m_size;
+			m_tables[table][n] = float(m_size - n) / m_size;
 		}
 	}
-	void fill_sawP(float pow) {
+	void fill_sawP(float pow,int table = 0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] =  std::pow( float(n) / m_size,pow);
+			m_tables[table][n] =  std::pow( float(n) / m_size,pow);
 		}
 	}
-	void fill_inverses_sawP(float pow) {
+	void fill_inverses_sawP(float pow,int table = 0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = std::pow(float(m_size - n) / m_size, pow);
+			m_tables[table][n] = std::pow(float(m_size - n) / m_size, pow);
 		}
 	}
-	void fill_openSquare() {
+	void fill_openSquare(int table) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = 1;
+			m_tables[table][n] = 1;
 		}
 	}
-	void fill_square(float pwidth) {
+	void fill_square(float pwidth,int table = 0) {
+        if(table  <0 || table >= m_tables.size())return;
+
 		for (int n = 0; n < m_size; ++n) {
-			m_table[n] = n < m_size * pwidth ? 1.0 : 0;
+			m_tables[table][n] = n < m_size * pwidth ? 1.0 : 0;
 		}
 	}
-	void fill_triangle() {
+	void fill_triangle(int table=0) {
+        if(table  <0 || table >= m_tables.size())return;
+        
 		for (int n = 0; n < m_size; ++n) {
 			if (n < m_size*0.5) {
-				m_table[n] = 2.0*(float(n ) / m_size);
+				m_tables[table][n] = 2.0*(float(n ) / m_size);
 			}
 			else {
-				m_table[n] =2.0f *(float(m_size-n) / m_size) ;
+				m_tables[table][n] =2.0f *(float(m_size-n) / m_size) ;
 			}
 		}
 	}
+    void add_channel(){
+        m_tables.push_back(Table(m_size));
+    }
 private:
 	double CubicInterpolate(
 		double y0, double y1,
@@ -154,7 +186,9 @@ private:
 	}
 public:
     //crashes after load of new
-	double get_sample(double index) {
+	double get_sample(double index,int table=0) {
+        if(table  <0 || table >= m_tables.size())return 0;
+
 		double fractpart, intpart;
 		fractpart = modf(index, &intpart);
 		long long int size = m_size - 1;
@@ -174,9 +208,15 @@ public:
 		while (y3Index > size)y3Index -= size;
 
 
-		return CubicInterpolate( m_table[y0Index], m_table[y1Index], m_table[y2Index], m_table[y3Index],fractpart);
+		return CubicInterpolate( m_tables[table][y0Index], m_tables[table][y1Index], m_tables[table][y2Index], m_tables[table][y3Index],fractpart);
 
 	}
-
+    void setBaseSampleRate(float sampleRate){
+        m_baseSampleRate = sampleRate;
+    
+    }
+    float getBaseSampleRate(){
+        return m_baseSampleRate;
+    }
 
 };

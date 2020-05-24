@@ -33,10 +33,16 @@ class CloudCreator
 
 
 	float scaledRandom(float lowerBound, float upperBound, float randomScale, float randomAmount);
-
-    bool m_freeRun = true;
-    
-    
+public:
+    enum Mode{
+        FreeRun = 0,
+        Client,
+        SamplePlayback,
+        
+    };
+private:
+    Mode m_mode;
+    Phasor m_playbackPhasor;
     
 public:
 	CloudCreator(float samplerate = 44100.0f, float spawnRateMS = 100, int maxGrains = 100, int numGrains = 100,int grainSize=44100);
@@ -45,6 +51,7 @@ public:
 	void process(float* left, float* right, int blocksize);
 	void stop();
 	void start();
+    void pause();
 	void updatePhasor();
 	GrainTable* get_lastTable();
     void create_newTable();
@@ -67,7 +74,7 @@ public:
     
     void set_tableIndex(float tableIndex);
     
-    void set_freeRunState(bool state);
+    void set_mode(Mode state);
     
     void spawn();
     std::function<void()> trigger;

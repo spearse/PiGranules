@@ -42,6 +42,8 @@ void Engine::loadFiles(Array<File> files){
             
             GrainTable* t =  m_cloudCreator.get_lastTable();
             t->set_size(numSamples);
+            t->setBaseSampleRate(reader->sampleRate);
+            
             for(int n = 0; n  < numSamples ; ++ n){
                 t->set_sample(n, samples.getSample(0, n));
             }

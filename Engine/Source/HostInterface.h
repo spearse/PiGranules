@@ -16,6 +16,7 @@ class PiGranulesApp;
 class HostInterface : public Component{
     PiGranulesApp* m_parent;
     TextButton m_test;
+    ToggleButton m_clientsFreeRun;
     
     friend class PiGranulesApp;
 public:

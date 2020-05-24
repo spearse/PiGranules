@@ -14,8 +14,11 @@
 
 HostInterface::HostInterface(PiGranulesApp* parent):
     m_parent(parent),
-    m_test("Hello","Hello")
+    m_test("Hello","Hello"),
+    m_clientsFreeRun("Clients Free Run")
 {
+    addAndMakeVisible(m_clientsFreeRun);
+    
     addAndMakeVisible(m_test);
     addAndMakeVisible(m_spawnRateController);
     setSize(300, 1000);
@@ -25,6 +28,7 @@ HostInterface::HostInterface(PiGranulesApp* parent):
 void HostInterface::resized(){
     auto size = getLocalBounds();
     m_test.setBounds(size.removeFromTop(100));
+    m_clientsFreeRun.setBounds(size.removeFromTop(100));
     m_spawnRateController.setBounds(size.removeFromTop(100));
     
 }

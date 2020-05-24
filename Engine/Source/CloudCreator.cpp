@@ -28,7 +28,8 @@ m_startPos(0),
 m_randPitchAmount(0),
 m_randPitchScale(20),
 m_randStartPosAmount(0),
-m_spawnTableIndex(1)
+m_spawnTableIndex(1),
+m_mode(FreeRun)
 {
     
     trigger = [this](){};
@@ -54,6 +55,16 @@ void CloudCreator::prepareToPlay(float sampleRate)
 {
     m_sampleRate = sampleRate;
     m_samplesToNextSpawn = (sampleRate*0.001) * m_spawnRateMS;
+ 
+    
+    m_playbackPhasor.set_sampleRate(sampleRate);
+    
+    
+    //now lets calculate the playback speed based on the
+     // numsamples/samplerate
+    float speed = m_multiGrain.get_table(m_spawnTableIndex)->get_size() / sampleRate;
+    float sampleRateDiff = m_multiGrain.get_table(m_spawnTableIndex)->getBaseSampleRate()/ sampleRate ;
+    m_playbackPhasor.set_frequency(speed * sampleRateDiff);
     
 }
 
@@ -63,7 +74,7 @@ void CloudCreator::process(float* left, float* right, int blocksize) {
         bool needsToSpawn = false;
         for (int n = 0; n < blocksize; ++n) {
             
-            if(m_freeRun){
+            if(m_mode == FreeRun){
                 m_samplesToNextSpawn -= 1;
                 if (m_samplesToNextSpawn <= 0) needsToSpawn = true;
                 if (needsToSpawn == true) {
@@ -83,6 +94,22 @@ void CloudCreator::process(float* left, float* right, int blocksize) {
                 //DBG("Grains " += grain );
             }
             m_phasor.tick();
+            
+            
+            
+            if(m_mode == SamplePlayback){
+                ///do sample playback stuff here//
+                float sampleIndex = m_playbackPhasor.get_phase() * m_multiGrain.get_table(m_spawnTableIndex)->get_size();
+                left[n] += m_multiGrain.get_sample(m_spawnTableIndex, sampleIndex);
+                //mono for now...
+                right[n] += m_multiGrain.get_sample(m_spawnTableIndex, sampleIndex);
+                
+                
+                
+                m_playbackPhasor.tick();
+            }
+            
+            
             
         }
     }
@@ -109,13 +136,15 @@ void CloudCreator::spawn(){
 void CloudCreator::stop() {
     
     m_play = false;
-    
+    m_playbackPhasor.set_phase(0);
     
 }
 void CloudCreator::start() {
     m_play = true;
 }
-
+void CloudCreator::pause() {
+    m_play = false;
+}
 
 void CloudCreator::updatePhasor() {
     
@@ -130,6 +159,9 @@ void CloudCreator::set_spawnRate(float spawnRate) {
     
     m_spawnRateMS = spawnRate;
     m_samplesToNextSpawn = (m_sampleRate*0.001) * m_spawnRateMS;
+    
+    
+    
 }
 void CloudCreator::set_grainSize(int grainSize) {
     if (grainSize <= 1)grainSize = 1;
@@ -203,6 +235,7 @@ void CloudCreator::deactivate_allGrains(){
     
 }
 
-void CloudCreator::set_freeRunState(bool state){
-    m_freeRun = state;
+void CloudCreator::set_mode(Mode state){
+
+    m_mode = state;
 }

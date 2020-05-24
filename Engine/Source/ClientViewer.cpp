@@ -20,10 +20,11 @@ ClientViewer::ClientViewer(){
 void ClientViewer::addClient(Component* child){
     
     if(child!= nullptr){
-        
+        MessageManagerLock lock;
         m_children.push_back(child);
         addAndMakeVisible( m_children.back());
         setSize(40,40 + int(40 * m_children.size()));
+        child->repaint();
         resized();
             
     }
@@ -51,12 +52,17 @@ void ClientButton::paintButton (Graphics &g, bool shouldDrawButtonAsHighlighted,
     
     
     auto size = getLocalBounds();
+    Colour col;
     if(m_state == Connecting){
-        g.setColour(Colours::darkorange);
+        col = Colours::darkorange;
     }else if (m_state == Connected){
-        g.setColour(Colours::darkgreen);
+        col =  Colours::darkgreen;
     }
+    g.setColour(col);
     g.fillEllipse(size.toFloat());
+    g.setColour(col.contrasting());
+    g.drawText(m_id, getLocalBounds(), Justification::centred);
+    
 }
 void ClientButton::connected(){
     

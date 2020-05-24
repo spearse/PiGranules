@@ -285,9 +285,12 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
             }
                 
             //ui stuff;;
+            MessageManagerLock lock;
+
             m_clientButtons.push_back(std::make_shared<ClientButton>(String(childId)));
             mainInteface->m_interface->m_clientViewer.addClient(m_clientButtons.back().get());
-            
+            m_clientButtons.back()->connected();
+            mainInteface->m_interface->resized();
             
             
             

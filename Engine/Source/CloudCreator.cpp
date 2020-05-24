@@ -126,7 +126,7 @@ void CloudCreator::spawn(){
             
             int audioSize =m_multiGrain.get_table(1)->get_size();
             float rStart = (scaledRandom(0, 1, m_randStartPosAmount, m_randStartPosAmount)*audioSize);
-            m_childGrains[g].spawn(m_grainSize, (m_phasor.get_phase() * audioSize) + (m_startPos * audioSize) , m_grainPitch ,m_sampleRate, m_spawnTableIndex   );
+            m_childGrains[g].spawn(m_grainSize, (m_phasor.get_phase() * audioSize) + (m_startPos * audioSize) , m_grainPitch ,m_sampleRate, m_spawnTableIndex   ,m_grainAmp,m_grainPan);
             return;
         }
     }
@@ -163,9 +163,13 @@ void CloudCreator::set_spawnRate(float spawnRate) {
     
     
 }
+//this should be in ms..
 void CloudCreator::set_grainSize(int grainSize) {
     if (grainSize <= 1)grainSize = 1;
-    m_grainSize = grainSize;
+    
+    
+    m_grainSize = (m_sampleRate*0.01) *  (float)grainSize  ;
+    DBG(m_grainSize);
 }
 void CloudCreator::set_numGrains(int numGrains) {
     if (numGrains >= m_maxNumGrains)numGrains = m_maxNumGrains;
@@ -238,4 +242,16 @@ void CloudCreator::deactivate_allGrains(){
 void CloudCreator::set_mode(Mode state){
 
     m_mode = state;
+}
+void CloudCreator::set_grainAmp(float amp){
+    if(amp >=0 && amp <20){
+    
+        m_grainAmp = amp;
+    }
+}
+void CloudCreator::set_grainPan(float pan){
+    if(pan < -1)pan = -1;
+    if(pan > 1)pan = 1;
+    m_grainPan = (pan +1)*0.5;
+    
 }

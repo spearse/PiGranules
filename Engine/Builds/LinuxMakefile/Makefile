@@ -69,6 +69,7 @@ endif
 
 OBJECTS_CONSOLEAPP := \
   $(JUCE_OBJDIR)/Application_d2fc77b1.o \
+  $(JUCE_OBJDIR)/ClientViewer_5d29d7c6.o \
   $(JUCE_OBJDIR)/CloudCreator_fda60140.o \
   $(JUCE_OBJDIR)/Engine_7f3228cb.o \
   $(JUCE_OBJDIR)/Grain_4c99d65c.o \
@@ -101,6 +102,11 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_CONSOLEAPP) : $(OBJECTS_CONSOLEAPP) $(RESOURCES)
 $(JUCE_OBJDIR)/Application_d2fc77b1.o: ../../Source/Application.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling Application.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ClientViewer_5d29d7c6.o: ../../Source/ClientViewer.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling ClientViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/CloudCreator_fda60140.o: ../../Source/CloudCreator.cpp

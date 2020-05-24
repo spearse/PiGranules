@@ -5,6 +5,9 @@
     <GROUP id="{B56FD4B6-BBC3-0E32-A261-C6A31E9E44E1}" name="Source">
       <FILE id="ALLhx7" name="Application.cpp" compile="1" resource="0" file="Source/Application.cpp"/>
       <FILE id="E1NvYo" name="Application.h" compile="0" resource="0" file="Source/Application.h"/>
+      <FILE id="d7Rcfa" name="ClientViewer.cpp" compile="1" resource="0"
+            file="Source/ClientViewer.cpp"/>
+      <FILE id="AKQfNf" name="ClientViewer.h" compile="0" resource="0" file="Source/ClientViewer.h"/>
       <FILE id="cXgs0i" name="CloudCreator.cpp" compile="1" resource="0"
             file="Source/CloudCreator.cpp"/>
       <FILE id="bYEQUm" name="CloudCreator.h" compile="0" resource="0" file="Source/CloudCreator.h"/>

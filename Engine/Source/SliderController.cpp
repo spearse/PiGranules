@@ -13,32 +13,45 @@
 
 
 SliderController::SliderController():
-m_slider(Slider::SliderStyle::RotaryHorizontalVerticalDrag,Slider::TextEntryBoxPosition::TextBoxBelow)
+Slider(Slider::SliderStyle::RotaryHorizontalVerticalDrag,Slider::TextEntryBoxPosition::TextBoxBelow)
 {
-    addAndMakeVisible(m_slider);
-    addAndMakeVisible(m_label);
-    m_label.attachToComponent(&m_slider, false);
+
+//    m_label.attachToComponent(&m_slider, true);
+    setSliderStyle(SliderStyle::RotaryHorizontalVerticalDrag);
     
     sliderMoved = [this](float){};
 
     
-    m_slider.onValueChange = [this](){
+    
+    onValueChange = [this](){
         if(m_range != nullptr){
-            float v = m_slider.getValue();
-            DBG("v " + String(v));
+            float v = getValue();
+         //   DBG("v " + String(v));
             sliderMoved(v);
         }
         
     };
     
 }
+
 void SliderController::resized(){
-    m_slider.setBounds(getLocalBounds());
+    Slider::resized();
 }
 
 void SliderController::setup(NormalisableRange<double> *range, String name){
     m_range = range;
-    m_slider.setNormalisableRange(*m_range);
-    m_label.setText(name, dontSendNotification);
+    setNormalisableRange(*m_range);
+    m_label = name;
     repaint();
 }
+void SliderController::paint(Graphics& g){
+    
+    g.saveState();
+    
+    g.setColour(Colours::white);
+    g.drawText(m_label,getLocalBounds(),Justification::centredTop);
+    
+    g.restoreState();
+    
+    Slider::paint(g);
+};

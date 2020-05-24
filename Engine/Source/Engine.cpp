@@ -18,7 +18,10 @@ m_spawnRateMSRange(1,10000),
 m_grainPitchRange(-10,10),
 m_startPosRange(0,1),
 m_masterPlaybackSpeedRange(-3,3),
-m_spawnTableIndexRange(1,2)
+m_spawnTableIndexRange(1,2),
+m_grainSize(10,2000),
+m_grainAmp(0,4),
+m_grainPan(-1,1)
 {
     externalAudioCallback = [this](const AudioSampleBuffer& buffer){};
 
@@ -100,6 +103,14 @@ void    Engine::audioDeviceIOCallback (const float **inputChannelData, int numIn
     }
     m_useOutBufferA = !m_useOutBufferA;
     
+    for(int n = 0 ; n  < numSamples ;++n){
+        
+        for(int c = 0; c < numOutputChannels;++c){
+            outputChannelData[c][n] *= m_positionAmplitude;
+            outputChannelData[c][n] *= m_mainAmplitude;
+        }
+        
+    }
     
     
 };

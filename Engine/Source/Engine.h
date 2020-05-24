@@ -25,6 +25,10 @@ class Engine : public AudioIODeviceCallback {
     
     PiGranulesApp* m_parent;
     
+    float m_mainAmplitude = 1;
+    float m_positionAmplitude = 1;
+    
+    
     AudioSampleBuffer m_outBufferA,m_outBufferB;
     AudioSampleBuffer m_inputBufferA,m_inputBufferB;
     bool m_useOutBufferA = true;
@@ -32,7 +36,7 @@ class Engine : public AudioIODeviceCallback {
     
     bool m_useRemoteAudio = false;
     
-    NormalisableRange<double> m_spawnRateMSRange, m_grainPitchRange,m_startPosRange, m_masterPlaybackSpeedRange,m_spawnTableIndexRange;
+    NormalisableRange<double> m_spawnRateMSRange, m_grainPitchRange,m_startPosRange, m_masterPlaybackSpeedRange,m_spawnTableIndexRange,m_grainSize,m_grainAmp,m_grainPan;
     
     //int m_maxNumGrains, m_numGrains ,m_samplesToNextSpawn,m_grainSize
     friend class PiGranulesApp;

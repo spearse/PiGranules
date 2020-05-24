@@ -11,15 +11,14 @@
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
-class SliderController : public Component{
-    Slider m_slider;
+class SliderController : public Slider{
     NormalisableRange<double>* m_range = nullptr;
-    Label m_label;
+    String m_label;
+    
 public:
     SliderController();
     void setup(NormalisableRange<double>* range,String name);
     void resized()override;
-    
+    void paint(Graphics& g)override;
     std::function<void(float)> sliderMoved;
 };

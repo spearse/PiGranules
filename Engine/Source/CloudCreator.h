@@ -17,7 +17,7 @@
 
 class CloudCreator 
 {
-	float m_sampleRate, m_spawnRateMS,m_masterPlaybackSpeed, m_grainPitch, m_startPos,m_spawnTableIndex;
+	float m_sampleRate, m_spawnRateMS,m_masterPlaybackSpeed, m_grainPitch, m_startPos,m_spawnTableIndex,m_grainAmp,m_grainPan;
 	int m_maxNumGrains, m_numGrains ,m_samplesToNextSpawn,m_grainSize;
 	GrainVector m_childGrains;
     
@@ -30,6 +30,7 @@ class CloudCreator
 
 	float m_randPitchAmount, m_randPitchScale;
 	float m_randStartPosAmount;
+    
 
 
 	float scaledRandom(float lowerBound, float upperBound, float randomScale, float randomAmount);
@@ -38,7 +39,7 @@ public:
         FreeRun = 0,
         Client,
         SamplePlayback,
-        
+        NumModes
     };
 private:
     Mode m_mode;
@@ -66,7 +67,8 @@ public:
 	void set_playBackSpeed(float speed);
 	void set_grainPitch(float pitch);
 	void set_startPos(float pos);
-
+    void set_grainAmp(float amp);
+    void set_grainPan(float pan);
     
 
 	void set_randGrainPitch(float amount);

@@ -30,10 +30,12 @@ void Grain::process(float* left, float* right, int index, MultiGrainTable* audio
     
     if (m_running == true) {
         float windowSize = window->get_size();
-        
-        float s = audio->get_sample(m_tableIndex,m_startPosition + m_currentPosition) * window->get_sample((m_sampleIndex / m_sampleDuration)  * windowSize);
-        left[index] += s;
-        right[index] += s;
+        float w =window->get_sample((m_sampleIndex / m_sampleDuration)  * windowSize);
+        float p =m_startPosition + m_currentPosition;
+        float l = audio->get_sample(m_tableIndex,p) ;
+        float r = audio->get_sample(m_tableIndex,p);
+        left[index] += ((l*w) * m_amp ) * cos(m_pan *1.57079632679);
+        right[index] += ((r*w) * m_amp) * sin(m_pan *1.57079632679);
         
         m_currentPosition += m_grainSpeed;
         ++m_sampleIndex;
@@ -47,7 +49,7 @@ void Grain::process(float* left, float* right, int index, MultiGrainTable* audio
 }
 
 
-void Grain::spawn(int duration, float startPos,float grainSpeed,float sampleRate,float tableIndex) {
+void Grain::spawn(int duration, float startPos,float grainSpeed,float sampleRate,float tableIndex,float amp,float pan) {
     m_sampleDuration = duration;
     m_startPosition = startPos;
     m_grainSpeed = grainSpeed;
@@ -56,7 +58,8 @@ void Grain::spawn(int duration, float startPos,float grainSpeed,float sampleRate
     m_phasor.set_phase(0);
     m_phasor.set_frequency(grainSpeed);
     m_tableIndex = tableIndex;
-    
+    m_amp = amp;
+    m_pan = pan;
     std::cout << m_tableIndex <<std::endl;
     
     m_available = false;

@@ -50,6 +50,8 @@ public:
     void setPlayBackSpeed(float speed);
     void setGrainPitch(float pitch);
     void setStartPos(float pos);
+    void setRemoteClientMode(CloudCreator::Mode mode);
+    void setCreatorMode(CloudCreator::Mode mode);
     
     friend class Engine;
     friend class HostInterface;
@@ -74,7 +76,7 @@ public:
                 setFullScreen (true);
                #else
                 setResizable (false, true);
-                centreWithSize (300, 1000);
+                centreWithSize (1000, 800);
                #endif
 
                 setVisible (true);
@@ -121,7 +123,7 @@ private:
     std::map<int,bool> m_remoteFileLoadStates;
     AudioSampleBuffer m_remoteAudioFileBuffer;
     
-     std::unique_ptr<MainWindow> mainInteface;
-    
+    std::unique_ptr<MainWindow> mainInteface;
+    std::vector<std::shared_ptr<ClientButton > > m_clientButtons;
 };
  

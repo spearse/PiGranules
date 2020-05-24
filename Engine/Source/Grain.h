@@ -17,7 +17,7 @@
 class Grain {
     bool m_available,m_running;
     float m_sampleDuration, m_sampleIndex;
-    float m_currentPosition,m_startPosition,m_grainSpeed,m_tableIndex;
+    float m_currentPosition,m_startPosition,m_grainSpeed,m_tableIndex,m_amp,m_pan;
     Phasor m_phasor;
 public:
     Grain();
@@ -25,7 +25,7 @@ public:
     
    
    
-    void spawn(int duration, float startPos,float grainSpeed=1,float sampleRate = 44100.0f,float tableIndex=1 );
+    void spawn(int duration, float startPos,float grainSpeed=1,float sampleRate = 44100.0f,float tableIndex=1,float amp = 0.707,float pan =0 );
     
     bool available();
 

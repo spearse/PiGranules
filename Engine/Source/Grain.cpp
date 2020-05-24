@@ -60,7 +60,7 @@ void Grain::spawn(int duration, float startPos,float grainSpeed,float sampleRate
     m_tableIndex = tableIndex;
     m_amp = amp;
     m_pan = pan;
-    std::cout << m_tableIndex <<std::endl;
+  //  std::cout << m_tableIndex <<std::endl;
     
     m_available = false;
     m_running = true;

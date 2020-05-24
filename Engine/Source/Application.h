@@ -58,7 +58,7 @@ public:
     void sendToClient(int index, OSCMessage msg);
     void sentToAllClients(const OSCMessage& msg);
     void spawnOnClient(int index);
-    
+    void testSound(int clientIndex);
     
      class MainWindow    : public DocumentWindow
         {

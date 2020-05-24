@@ -12,7 +12,7 @@
 #include "SliderController.h"
 
 PiGranulesApp::PiGranulesApp():
-    m_audioEngine(this)
+m_audioEngine(this)
 {
     
 }
@@ -22,7 +22,7 @@ void PiGranulesApp::initialise (const String& commandLine)
     DBG("Pi Granules Starting");
     String init = m_deviceManager.initialiseWithDefaultDevices(0, 2);
     DBG(init);
-   
+    
     m_addr = IPAddress::getLocalAddress();
     DBG("Ip of device: " + m_addr.toString());
     StringArray cmds = JUCEApplicationBase::getCommandLineParameterArray();
@@ -61,7 +61,7 @@ void PiGranulesApp::initialise (const String& commandLine)
     if(m_hostMode){
         m_hostOscReceiver.addListener(this);
         m_hostAddr = m_addr;
-         bool connected = m_oscReceiver.connect(2113);
+        bool connected = m_oscReceiver.connect(2113);
         DBG("Setting up host");
         
         mainInteface.reset(new MainWindow("Pi Granules Host",this));
@@ -80,46 +80,46 @@ void PiGranulesApp::initialise (const String& commandLine)
         
         mainInteface->m_interface->m_grainSizeController.setup(&m_audioEngine.m_grainSize, "Grain Size");
         mainInteface->m_interface->m_grainSizeController.sliderMoved = [this](float value){
-                   OSCMessage msg("/grainsize");
-                   msg.addInt32(value);
-                   sentToAllClients(msg);
-                   //should it update self?
-                   m_audioEngine.getCloudCreator().set_grainSize(value);
-               };
+            OSCMessage msg("/grainsize");
+            msg.addInt32(value);
+            sentToAllClients(msg);
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_grainSize(value);
+        };
         
-    mainInteface->m_interface->m_grainPitchController.setup(&m_audioEngine.m_grainPitchRange, "Grain Pitch");
+        mainInteface->m_interface->m_grainPitchController.setup(&m_audioEngine.m_grainPitchRange, "Grain Pitch");
         mainInteface->m_interface->m_grainPitchController.sliderMoved = [this](float value){
-                         OSCMessage msg("/grainpitch");
-                         msg.addFloat32(value);
-                         sentToAllClients(msg);
-                         //should it update self?
-                         m_audioEngine.getCloudCreator().set_grainPitch(value);
-                     };
-    mainInteface->m_interface->m_playspeedController.setup(&m_audioEngine.m_masterPlaybackSpeedRange, "Playback Speed Pitch");
+            OSCMessage msg("/grainpitch");
+            msg.addFloat32(value);
+            sentToAllClients(msg);
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_grainPitch(value);
+        };
+        mainInteface->m_interface->m_playspeedController.setup(&m_audioEngine.m_masterPlaybackSpeedRange, "Playback Speed Pitch");
         mainInteface->m_interface->m_playspeedController.sliderMoved = [this](float value){
-                               OSCMessage msg("/playspeed");
-                               msg.addFloat32(value);
-                               sentToAllClients(msg);
-                               //should it update self?
-                               m_audioEngine.getCloudCreator().set_playBackSpeed(value);
-                           };
-                    mainInteface->m_interface->m_grainAmpController.setup(&m_audioEngine.m_grainAmp, "Grain Amp");
-                    mainInteface->m_interface->m_grainAmpController.sliderMoved = [this](float value){
-                                           OSCMessage msg("/grainamp");
-                                           msg.addFloat32(value);
-                                           sentToAllClients(msg);
-                                           //should it update self?
-                                           m_audioEngine.getCloudCreator().set_grainAmp(value);
-                                       };
+            OSCMessage msg("/playspeed");
+            msg.addFloat32(value);
+            sentToAllClients(msg);
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_playBackSpeed(value);
+        };
+        mainInteface->m_interface->m_grainAmpController.setup(&m_audioEngine.m_grainAmp, "Grain Amp");
+        mainInteface->m_interface->m_grainAmpController.sliderMoved = [this](float value){
+            OSCMessage msg("/grainamp");
+            msg.addFloat32(value);
+            sentToAllClients(msg);
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_grainAmp(value);
+        };
         mainInteface->m_interface->m_grainPanController.setup(&m_audioEngine.m_grainPan, "Grain Pan");
         mainInteface->m_interface->m_grainPanController.sliderMoved = [this](float value){
-                               OSCMessage msg("/grainpan");
-                               msg.addFloat32(value);
-                               sentToAllClients(msg);
-                               //should it update self?
-                               m_audioEngine.getCloudCreator().set_grainPan(value);
-                           };
-              
+            OSCMessage msg("/grainpan");
+            msg.addFloat32(value);
+            sentToAllClients(msg);
+            //should it update self?
+            m_audioEngine.getCloudCreator().set_grainPan(value);
+        };
+        
         mainInteface->m_interface->m_clientsFreeRun.onClick= [this](){
             setRemoteClientMode(CloudCreator::Mode::FreeRun);
         };
@@ -130,17 +130,17 @@ void PiGranulesApp::initialise (const String& commandLine)
             setRemoteClientMode(CloudCreator::Mode::SamplePlayback);
         };
         
-       // m_audioEngine.getCloudCreator().set_spawnRate(10);
+        // m_audioEngine.getCloudCreator().set_spawnRate(10);
         
         
         //mainInteface->addToDesktop();
         
         if(!connected){
-               DBG("Could not setup host to listen on port 2113. Please ensure this port is free!");
-               JUCEApplicationBase::quit();
-           }else{
-               DBG("Host on port 2113");
-           }
+            DBG("Could not setup host to listen on port 2113. Please ensure this port is free!");
+            JUCEApplicationBase::quit();
+        }else{
+            DBG("Host on port 2113");
+        }
     }else{
         searchForHost();
     }
@@ -151,7 +151,7 @@ void PiGranulesApp::initialise (const String& commandLine)
     
     
     m_audioEngine.externalAudioCallback = [this](const AudioSampleBuffer& buffer){
-      
+        
         OSCMessage msg("/rawaudio");
         msg.addInt32(buffer.getNumChannels());
         msg.addInt32(buffer.getNumSamples());
@@ -177,10 +177,10 @@ void PiGranulesApp::sentToAllClients(const OSCMessage& msg){
     for(int n = 0 ; n < m_childAddresses.size();++n){
         m_sender.disconnect();
         if(m_childAddresses[n].toString().isNotEmpty()){
-        if(m_sender.connect(m_childAddresses[n].toString(), 2112)){
-                    m_sender.send(msg);
-        };
-        m_sender.disconnect();
+            if(m_sender.connect(m_childAddresses[n].toString(), 2112)){
+                m_sender.send(msg);
+            };
+            m_sender.disconnect();
         }
         
         
@@ -283,15 +283,19 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
             }else{
                 childId = knownLoc;
             }
-                
-            //ui stuff;;
-            MessageManagerLock lock;
-
-            m_clientButtons.push_back(std::make_shared<ClientButton>(String(childId)));
-            mainInteface->m_interface->m_clientViewer.addClient(m_clientButtons.back().get());
-            m_clientButtons.back()->connected();
-            mainInteface->m_interface->resized();
             
+            //ui stuff;;
+            
+            if(!childKnown){
+                MessageManagerLock lock;
+                m_clientButtons.push_back(std::make_shared<ClientButton>(String(childId)));
+                mainInteface->m_interface->m_clientViewer.addClient(m_clientButtons.back().get());
+                m_clientButtons.back()->connected();
+                m_clientButtons.back()->onClick = [this,childId](){
+                    testSound(childId);
+                };
+                mainInteface->m_interface->resized();
+            }
             
             
             DBG("Assigned " + childIp + " child id " + String(childId));
@@ -375,34 +379,34 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
             }
         }
     }else if(path == "/grainpan"){
-            if(!message.isEmpty()){
-                float start = GetFloatSafely(message, 0);
-                if(start != -666){
-                    m_audioEngine.getCloudCreator().set_grainPan(start);
-                }
+        if(!message.isEmpty()){
+            float start = GetFloatSafely(message, 0);
+            if(start != -666){
+                m_audioEngine.getCloudCreator().set_grainPan(start);
             }
+        }
     }else if(path == "/spawnmode"){
         
     }else if(path =="/mode"){
-            if(!message.isEmpty()){
-                    int mode = GetIntSafely(message, 0);
-                    if(mode != -666 && mode >=0 && mode < CloudCreator::Mode::NumModes){
-                       CloudCreator::Mode m;
-                        switch (mode) {
-                            case 0:
-                                m = CloudCreator::Mode::FreeRun;
-                                break;
-                            case 1:
-                                m = CloudCreator::Mode::Client;
-                            case 2:
-                                m = CloudCreator::Mode::SamplePlayback;
-                            default:
-                                m = CloudCreator::Mode::FreeRun;
-                                break;
-                        }
-                        m_audioEngine.getCloudCreator().set_grainPan(m);
-                    }
+        if(!message.isEmpty()){
+            int mode = GetIntSafely(message, 0);
+            if(mode != -666 && mode >=0 && mode < CloudCreator::Mode::NumModes){
+                CloudCreator::Mode m;
+                switch (mode) {
+                    case 0:
+                        m = CloudCreator::Mode::FreeRun;
+                        break;
+                    case 1:
+                        m = CloudCreator::Mode::Client;
+                    case 2:
+                        m = CloudCreator::Mode::SamplePlayback;
+                    default:
+                        m = CloudCreator::Mode::FreeRun;
+                        break;
                 }
+                m_audioEngine.getCloudCreator().set_grainPan(m);
+            }
+        }
         
     }else if(path == "/spawn"){
         m_audioEngine.getCloudCreator().spawn();
@@ -428,7 +432,7 @@ void PiGranulesApp::oscMessageReceived (const OSCMessage& message){
     }
     
     
-
+    
 };
 void PiGranulesApp::sendHostInformation(String targetIp){
     m_sender.connect(targetIp, 2112);
@@ -444,7 +448,7 @@ void PiGranulesApp::searchForHost(){
         return;
     }
     DBG("Searching for host");
-
+    
     m_searchingForHostState = true;
     for(int n = 0 ; n < 255; ++n){
         
@@ -494,7 +498,7 @@ void PiGranulesApp::sendToClient(int index, OSCMessage msg){
     if(index >=0 && index < m_childAddresses.size()){
         m_sender.disconnect();
         if(m_sender.connect(m_childAddresses[index].toString(), 2112)){
-                m_sender.send(msg);
+            m_sender.send(msg);
         };
         m_sender.disconnect();
         
@@ -516,7 +520,12 @@ void PiGranulesApp::setCreatorMode(CloudCreator::Mode mode){
     m_audioEngine.getCloudCreator().set_mode(mode);
 }
 
-
+void PiGranulesApp::testSound(int clientIndex){
+    
+    OSCMessage msg("/playtest");
+    sendToClient(clientIndex, msg);
+    
+}
 
 ////////
 
@@ -543,9 +552,9 @@ bool  PiGranulesApp::moreThanOneInstanceAllowed (){
 void     PiGranulesApp::anotherInstanceStarted (const String &commandLine){
 };
 void     PiGranulesApp::systemRequestedQuit (){
-        m_audioEngine.deactivate();
-        m_deviceManager.closeAudioDevice();
-        quit();
+    m_audioEngine.deactivate();
+    m_deviceManager.closeAudioDevice();
+    quit();
 };
 void     PiGranulesApp::suspended (){
 };
@@ -553,8 +562,8 @@ void     PiGranulesApp::resumed (){
 };
 
 void     PiGranulesApp::unhandledException (const std::exception*,const String&     sourceFilename,int lineNumber){
-        DBG("Unhandled exception " + sourceFilename + String(lineNumber));
-        JUCEApplicationBase::quit();
+    DBG("Unhandled exception " + sourceFilename + String(lineNumber));
+    JUCEApplicationBase::quit();
 }
 
 START_JUCE_APPLICATION (PiGranulesApp)
